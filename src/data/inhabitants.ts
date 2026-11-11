@@ -1,4 +1,12 @@
-export type InhabitantId = 'peche' | 'noa' | 'brisa' | 'luna' | 'tilo' | 'robi'
+export type InhabitantId = 'lila' | 'renato' | 'rock' | 'tadeo'
+
+export type RecipeDifficulty = 'facil' | 'medio' | 'dificil'
+
+export interface InhabitantRecipes {
+  facil: string
+  medio: string
+  dificil: string
+}
 
 export interface Inhabitant {
   id: InhabitantId
@@ -16,29 +24,67 @@ export interface Inhabitant {
   birthday: string
   difficulty: 'facil' | 'medio' | 'dificil'
   houseStyle: 'tejado-paja' | 'tejado-teja' | 'tejado-hoja' | 'tejado-nieve' | 'tejado-miel' | 'tejado-hoja-seca'
+  recipes: InhabitantRecipes
 }
 
 export const inhabitants: Inhabitant[] = [
   {
-    id: 'peche',
-    name: 'Pêche',
+    id: 'lila',
+    name: 'Lila Castaña',
+    species: 'Ardilla',
+    catchphrase: '¡Qué rico huele el bosque!',
+    avatar: '🐿️',
+    color: '#e1bee7',
+    accent: '#ce93d8',
+    personality: 'curioso',
+    bio: 'Le encanta probar sabores nuevos y recorrer el bosque buscando ingredientes para sus recetas.',
+    playlist: ['Paseo entre castaños', 'Brisa de otoño', 'Dulce dormitar'],
+    favoriteFlavors: ['castaña', 'miel', 'canela', 'frutilla'],
+    bestFriend: 'renato',
+    birthday: '8 de abril',
+    difficulty: 'facil',
+    houseStyle: 'tejado-hoja-seca',
+    recipes: { facil: 'batido-tarta-limon', medio: 'lasagna-picante', dificil: 'empanadas-res-papas' },
+  },
+  {
+    id: 'renato',
+    name: 'Renato Zorro',
+    species: 'Zorro',
+    catchphrase: '¡Qué travesura tan rica!',
+    avatar: '🦊',
+    color: '#ffccbc',
+    accent: '#ffab91',
+    personality: 'travieso',
+    bio: 'Zorro pícaro que convierte las frutas del huerto en postres imposibles de resistir.',
+    playlist: ['Zorro en fuga', 'Ritmo de zapatillas', 'Canto de medianoche'],
+    favoriteFlavors: ['mora', 'frambuesa', 'canela', 'naranja'],
+    bestFriend: 'lila',
+    birthday: '25 de agosto',
+    difficulty: 'dificil',
+    houseStyle: 'tejado-teja',
+    recipes: { facil: 'club-sandwich-vegetales', medio: 'pollo-naranja', dificil: 'tamales-carne-mole' },
+  },
+  {
+    id: 'rock',
+    name: 'Rock Oso',
     species: 'Oso',
     catchphrase: '¡Dulzura para todos!',
     avatar: '🐻',
     color: '#f4c2c2',
     accent: '#e5989b',
     personality: 'dulce',
-    bio: 'Oso golosino que ama los postres suaves y las meriendas con té. Siempre tiene una galleta guardada en el bolsillo.',
+    bio: 'Oso golosino que ama los postres suaves y las meriendas con té. Siempre guarda una galleta en el bolsillo.',
     playlist: ['Canción de cuna del bosque', 'Té de la tarde', 'Susurros de miel'],
     favoriteFlavors: ['miel', 'avena', 'vainilla', 'frutilla'],
-    bestFriend: 'luna',
+    bestFriend: 'tadeo',
     birthday: '15 de marzo',
     difficulty: 'facil',
     houseStyle: 'tejado-miel',
+    recipes: { facil: 'tarta-bayas', medio: 'gelatina-fresas-crema', dificil: 'volovanes-natilla-coco-chocolate' },
   },
   {
-    id: 'noa',
-    name: 'Noa',
+    id: 'tadeo',
+    name: 'Tadeo Búho',
     species: 'Búho',
     catchphrase: 'Con precisión y calma.',
     avatar: '🦉',
@@ -48,78 +94,11 @@ export const inhabitants: Inhabitant[] = [
     bio: 'Búho bibliotecario que mide cada gramo y cuenta cada minuto. Sus recetas son equilibradas y nutritivas.',
     playlist: ['Piano de medianoche', 'Lluvia suave sobre hojas', 'Silencio de la biblioteca'],
     favoriteFlavors: ['setas', 'romero', 'limón', 'avena integral'],
-    bestFriend: 'tilo',
+    bestFriend: 'rock',
     birthday: '3 de octubre',
     difficulty: 'medio',
-    houseStyle: 'tejado-teja',
-  },
-  {
-    id: 'brisa',
-    name: 'Brisa',
-    species: 'Ardilla',
-    catchphrase: '¡A toda velocidad!',
-    avatar: '🐿️',
-    color: '#ffe0b2',
-    accent: '#ffb74d',
-    personality: 'energetico',
-    bio: 'Ardilla inquieta que cocina entre saltos y risas. Sus platos son atrevidos, coloridos y llenos de energía.',
-    playlist: ['Corre ardilla corre', 'Fiesta en la copla', 'Trompeta del viento'],
-    favoriteFlavors: ['mora', 'piña', 'chile', 'limón'],
-    bestFriend: 'robi',
-    birthday: '20 de junio',
-    difficulty: 'dificil',
-    houseStyle: 'tejado-hoja',
-  },
-  {
-    id: 'luna',
-    name: 'Luna',
-    species: 'Coneja',
-    catchphrase: 'Salto y pruebo.',
-    avatar: '🐰',
-    color: '#e1bee7',
-    accent: '#ce93d8',
-    personality: 'curioso',
-    bio: 'Coneja saltarina que prueba cada plato nuevo del bosque y cuenta lo que siente en cada bocado.',
-    playlist: ['Saltos bajo la luna', 'Trino de grillos', 'Dulce dormitar'],
-    favoriteFlavors: ['frutilla', 'flores', 'menta', 'miel'],
-    bestFriend: 'peche',
-    birthday: '8 de abril',
-    difficulty: 'facil',
     houseStyle: 'tejado-paja',
-  },
-  {
-    id: 'tilo',
-    name: 'Tilo',
-    species: 'Erizo',
-    catchphrase: 'Poco a poco, todo se sabe.',
-    avatar: '🦔',
-    color: '#d7ccc8',
-    accent: '#bcaaa4',
-    personality: 'sabio',
-    bio: 'Erizo tranquilo que observa el bosque desde su seto. Sabe el nombre de cada seta y cada piedra.',
-    playlist: ['Susurro del seto', 'Toc-toc de lluvia', 'Música para leer'],
-    favoriteFlavors: ['setas', 'nueces', 'miel de bosque', 'tomillo'],
-    bestFriend: 'noa',
-    birthday: '12 de noviembre',
-    difficulty: 'medio',
-    houseStyle: 'tejado-hoja-seca',
-  },
-  {
-    id: 'robi',
-    name: 'Robi',
-    species: 'Zorro',
-    catchphrase: '¡Qué travesura tan rica!',
-    avatar: '🦊',
-    color: '#ffccbc',
-    accent: '#ffab91',
-    personality: 'travieso',
-    bio: 'Zorro pícaro que roba frutas del huerto y las convierte en postres imposibles de resistir.',
-    playlist: ['Zorro en fuga', 'Ritmo de zapatillas', 'Canto de medianoche'],
-    favoriteFlavors: ['mora', 'frambuesa', 'canela', 'naranja'],
-    bestFriend: 'brisa',
-    birthday: '25 de agosto',
-    difficulty: 'dificil',
-    houseStyle: 'tejado-nieve',
+    recipes: { facil: 'ensalada-papas-hierbas', medio: 'risotto-quinua-champinones', dificil: 'timbal-quinua-pollo' },
   },
 ]
 

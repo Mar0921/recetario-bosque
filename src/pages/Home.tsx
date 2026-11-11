@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { BookOpen } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { recipes } from '../data/recipes'
+import { inhabitants } from '../data/inhabitants'
+import { characterById } from '../data/characters'
 import { RecipeCard } from '../components/RecipeCard'
 import { CommentSection } from '../components/CommentSection'
 
@@ -35,18 +37,22 @@ export function Home() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-      <section className="bg-pastel-paper p-8 text-center rounded-3xl border border-black/20 shadow-lg">
+      <div className="relative w-full h-48 mb-8 bg-[#C3B59F] rounded-3xl p-2 flex items-center justify-center">
         <video
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className="w-full max-w-md mx-auto mb-6 rounded-xl border border-black/20 shadow-lg"
+          loop
+          className="w-full h-full rounded-2xl relative z-10"
           poster="/favicon.svg"
         >
           <source src="/animacion.mp4" type="video/mp4" />
           Tu navegador no soporta este video.
         </video>
+      </div>
+
+      <section className="bg-pastel-paper p-8 text-center rounded-3xl border border-black/20 shadow-lg">
         <h2 className="text-3xl font-bold text-baloon text-[#5d4a3a] mb-2">
           Bienvenido al Recetario del Bosque
         </h2>
@@ -117,62 +123,35 @@ export function Home() {
           </Link>
         </div>
         <div className="space-y-4">
-          {[
-            {
-              id: 'post-1',
-              author: 'Luna',
-              avatar: '🐰',
-              title: 'Mi primer plato: Galletas de Miel',
-              content:
-                '¡Hola bosque! Hoy probé las galletas de Pêche y quedaron riquísimas. Me encantó el toque de avena.',
-              image: '🍪',
-              likes: 12,
-              comments: [
-                {
-                  id: 'c1',
-                  author: 'Pêche',
-                  avatar: '🐻',
-                  content: '¡Me alegra tanto que te hayan gustado! Pruébalas con un té de flores.',
-                  createdAt: 'hace 2 h',
-                },
-              ],
-              createdAt: 'hace 5 h',
-            },
-            {
-              id: 'post-2',
-              author: 'Tilo',
-              avatar: '🦔',
-              title: 'Sopa de setas de Noa',
-              content:
-                'Seguí el tutorial de Noa paso a paso. La sopa quedó cremosa y calentita. ¡Perfecto para la tarde!',
-              image: '🍄',
-              likes: 8,
-              comments: [],
-              createdAt: 'hace 1 d',
-            },
-            {
-              id: 'post-3',
-              author: 'Robi',
-              avatar: '🦊',
-              title: 'Brochetas arcoíris de Brisa',
-              content:
-                'Brisa tiene razón, el caos es divertido. Quedaron coloridas y sabrosas.',
-              image: '🍓',
-              likes: 15,
-              comments: [
-                {
-                  id: 'c2',
-                  author: 'Brisa',
-                  avatar: '🐿️',
-                  content: '¡A toda velocidad! La próxima prueba la tortilla.',
-                  createdAt: 'hace 12 h',
-                },
-              ],
-              createdAt: 'hace 1 d',
-            },
-          ].map((post: any) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          {inhabitants.map((inhabitant: any) => {
+            const recipesForInhabitant = recipes.filter((r: any) => {
+              const ids = Object.values(inhabitant.recipes) as string[]
+              return ids.includes(r.id)
+            })
+            const comments = recipesForInhabitant.slice(0, 2).map((recipe: any) => ({
+              id: `c-${recipe.id}`,
+              author: characterById(recipe.characterId).name,
+              avatar: characterById(recipe.characterId).avatar,
+              content: `¡Me encanta tu ${recipe.title.toLowerCase()}! ${recipe.lore.substring(0, 60)}...`,
+              createdAt: 'hace 2 h',
+            }))
+            return (
+              <PostCard
+                key={inhabitant.id}
+                post={{
+                  id: `post-${inhabitant.id}`,
+                  author: inhabitant.name,
+                  avatar: inhabitant.avatar,
+                  title: inhabitant.catchphrase,
+                  content: inhabitant.bio,
+                  image: inhabitant.favoriteFlavors[0],
+                  likes: (inhabitant.id.charCodeAt(0) * 7) % 20 + 5,
+                  comments,
+                  createdAt: 'hace 1 d',
+                }}
+              />
+            )
+          })}
         </div>
       </section>
     </div>

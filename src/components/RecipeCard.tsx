@@ -44,12 +44,17 @@ export function RecipeCard({ recipe, onSelect, unlocked }: RecipeCardProps) {
       <p className="text-xs text-[#5d4a3a]/60 mb-3">
         {recipe.time} · {recipe.serves}
       </p>
-      <div className="flex gap-2 mb-3">
-        {recipe.tags.map((tag: string) => (
+      <div className="flex gap-2 mb-3 flex-wrap">
+        {recipe.tags.slice(0, 3).map((tag: string) => (
           <span key={tag} className="text-[10px] bg-white border border-black/20 px-2 py-0.5 rounded-full text-[#5d4a3a]/70">
-            #{tag}
+            {tag}
           </span>
         ))}
+        {recipe.tags.length > 3 && (
+          <span className="text-[10px] bg-white border border-black/20 px-2 py-0.5 rounded-full text-[#5d4a3a]/50">
+            +{recipe.tags.length - 3}
+          </span>
+        )}
       </div>
       {!unlocked ? (
         <div className="flex items-center gap-2 pt-3 border-t border-black/10">

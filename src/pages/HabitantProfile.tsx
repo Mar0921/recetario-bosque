@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Star, Music, Flame, Heart, ArrowLeft, ForkKnife } from 'lucide-react'
-import { inhabitantById, inhabitants } from '../data/inhabitants'
+import { inhabitantById, inhabitants, type InhabitantId } from '../data/inhabitants'
 import { inhabitantPosts } from '../data/inhabitant-posts'
-import { recipesByCharacter } from '../data/recipes'
+import { recipeById } from '../data/recipes'
 import { RecipeCard } from '../components/RecipeCard'
 
 const personalityBg: Record<string, string> = {
@@ -36,10 +36,14 @@ const personalityLabel: Record<string, string> = {
 export function HabitantProfile() {
   const { id } = useParams<{ id: string }>()
   if (!id) return null
-  const inhabitant = inhabitantById(id as any)
+  const inhabitant = inhabitantById(id as InhabitantId)
   const posts = inhabitantPosts[id] || []
   const bestFriend = inhabitants.find((i) => i.id === inhabitant.bestFriend)
-  const inhabitantRecipes = recipesByCharacter(id as any)
+  const inhabitantRecipes = [
+    inhabitant.recipes.facil,
+    inhabitant.recipes.medio,
+    inhabitant.recipes.dificil,
+  ].map((recipeId) => recipeById(recipeId)!).filter(Boolean)
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
