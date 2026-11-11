@@ -4,7 +4,7 @@ import { BookOpen } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { recipes } from '../data/recipes'
 import { inhabitants } from '../data/inhabitants'
-import { characterById } from '../data/characters'
+import { inhabitantPosts } from '../data/inhabitant-posts'
 import { RecipeCard } from '../components/RecipeCard'
 import { CommentSection } from '../components/CommentSection'
 
@@ -12,6 +12,14 @@ const difficultyLabels: Record<string, { label: string; icon: string; color: str
   facil: { label: 'Fácil', icon: '🟢', color: '#f4c2c2' },
   medio: { label: 'Medio', icon: '🟡', color: '#d1f2eb' },
   dificil: { label: 'Difícil', icon: '🔴', color: '#ffe0b2' },
+}
+
+function parseRelativeTime(str: string): number {
+  const match = str.match(/hace (\d+) ([hd])/)
+  if (!match) return 0
+  const value = parseInt(match[1])
+  const unit = match[2]
+  return unit === 'h' ? value : value * 24
 }
 
 export function Home() {
@@ -123,65 +131,108 @@ export function Home() {
           </Link>
         </div>
         <div className="space-y-4">
-          {inhabitants.map((inhabitant: any) => {
-            const recipesForInhabitant = recipes.filter((r: any) => {
-              const ids = Object.values(inhabitant.recipes) as string[]
-              return ids.includes(r.id)
-            })
-            const comments = recipesForInhabitant.slice(0, 2).map((recipe: any) => ({
-              id: `c-${recipe.id}`,
-              author: characterById(recipe.characterId).name,
-              avatar: characterById(recipe.characterId).avatar,
-              content: `¡Me encanta tu ${recipe.title.toLowerCase()}! ${recipe.lore.substring(0, 60)}...`,
-              createdAt: 'hace 2 h',
-            }))
-            return (
-              <PostCard
-                key={inhabitant.id}
-                post={{
-                  id: `post-${inhabitant.id}`,
+          {(() => {
+            const allPosts: any[] = []
+            Object.entries(inhabitantPosts).forEach(([inhabitantId, posts]) => {
+              const inhabitant = inhabitants.find((i) => i.id === inhabitantId)
+              if (!inhabitant) return
+              posts.forEach((post) => {
+                allPosts.push({
+                  ...post,
                   author: inhabitant.name,
                   avatar: inhabitant.avatar,
-                  title: inhabitant.catchphrase,
-                  content: inhabitant.bio,
-                  image: inhabitant.favoriteFlavors[0],
-                  likes: (inhabitant.id.charCodeAt(0) * 7) % 20 + 5,
-                  comments,
-                  createdAt: 'hace 1 d',
-                }}
-              />
-            )
-          })}
+                  inhabitantId,
+                })
+              })
+            })
+            // Sort by createdAt (newest first)
+            allPosts.sort((a, b) => {
+              const timeA = parseRelativeTime(a.createdAt)
+              const timeB = parseRelativeTime(b.createdAt)
+              return timeA - timeB
+            })
+             return allPosts.map((post) => (
+               <PostCard
+                 key={post.id}
+                 post={{
+                   id: post.id,
+                   author: post.author,
+                   avatar: post.avatar,
+                   inhabitantId: post.inhabitantId,
+                   title: post.title,
+                   content: post.content,
+                   image: post.image,
+                   likes: post.likes,
+                   comments: post.comments,
+                   createdAt: post.createdAt,
+                   replies: post.replies,
+                 }}
+               />
+             ))
+          })()}
         </div>
       </section>
     </div>
   )
 }
 
-function PostCard({ post }: { post: any }) {
-  return (
-    <article className="paper-card p-5 border-black/20">
-      <div className="flex items-start gap-3 mb-3">
-        <span className="text-2xl shrink-0">{post.avatar}</span>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-basename gap-2 mb-1">
-            <span className="font-bold text-[#5d4a3a] text-sm">{post.author}</span>
-            <span className="text-xs text-[#5d4a3a]/50">{post.createdAt}</span>
-          </div>
-          <h3 className="text-lg font-bold text-baloon text-[#5d4a3a]">{post.title}</h3>
-        </div>
-      </div>
-      <p className="text-[#5d4a3a] mb-4 leading-relaxed">{post.content}</p>
-      <div className="text-2xl mb-4">{post.image}</div>
-      <div className="flex items-center gap-4 text-xs text-[#5d4a3a]/60 border-t border-black/10 pt-3">
-        <button className="flex items-center gap-1.5 hover:text-[#8d4a4a] transition-colors">
-          <span>❤️</span> <span>{post.likes}</span>
-        </button>
-        <button className="flex items-center gap-1.5 hover:text-[#2d6a4f] transition-colors">
-          <span>💬</span> <span>{post.comments.length}</span>
-        </button>
-      </div>
-      <CommentSection />
-    </article>
-  )
-}
+ function PostCard({ post }: { post: any }) {
+   const authorInhabitant = post.inhabitantId
+     ? inhabitants.find((i) => i.id === post.inhabitantId)
+     : inhabitants.find((i) => i.name === post.author)
+   return (
+     <article className="paper-card p-5 border-black/20">
+       <div className="flex items-start gap-3 mb-3">
+         {authorInhabitant ? (
+           <img
+             src={`/pf/${authorInhabitant.id}.jpeg`}
+             alt={post.author}
+             className="w-10 h-10 rounded-full object-cover shrink-0 border border-black/20"
+           />
+         ) : (
+           <span className="text-2xl shrink-0">{post.avatar}</span>
+         )}
+         <div className="flex-1 min-w-0">
+           <div className="flex items-basename gap-2 mb-1">
+             <span className="font-bold text-[#5d4a3a] text-sm">{post.author}</span>
+             <span className="text-xs text-[#5d4a3a]/50">{post.createdAt}</span>
+           </div>
+           <h3 className="text-lg font-bold text-baloon text-[#5d4a3a]">{post.title}</h3>
+         </div>
+       </div>
+       <p className="text-[#5d4a3a] mb-4 leading-relaxed">{post.content}</p>
+       <div className="text-2xl mb-4">{post.image}</div>
+       {post.replies && post.replies.length > 0 && (
+         <div className="mb-3">
+           <div className="text-[10px] font-bold text-[#5d4a3a]/60 uppercase tracking-wider mb-1">Comentarios</div>
+           {post.replies.map((reply: { author: string; text: string }, i: number) => {
+             const replyAuthor = inhabitants.find((inh) => inh.name === reply.author)
+             return (
+               <div key={i} className="p-2 bg-[#f7f3ea] border border-black/10 rounded-lg text-sm text-[#5d4a3a] leading-relaxed flex items-start gap-2">
+                 {replyAuthor ? (
+                   <img
+                     src={`/pf/${replyAuthor.id}.jpeg`}
+                     alt={reply.author}
+                     className="w-6 h-6 rounded-full object-cover shrink-0 border border-black/20"
+                   />
+                 ) : null}
+                 <div>
+                   <span className="font-bold text-[#3e2a20]">{reply.author}:</span> {reply.text}
+                 </div>
+               </div>
+             )
+           })}
+         </div>
+       )}
+       <div className="flex items-center gap-4 text-xs text-[#5d4a3a]/60 border-t border-black/10 pt-3">
+         <button className="flex items-center gap-1.5 hover:text-[#8d4a4a] transition-colors">
+           <span>❤️</span> <span>{post.likes}</span>
+         </button>
+         <button className="flex items-center gap-1.5 hover:text-[#2d6a4f] transition-colors">
+           <span>💬</span> <span>{post.comments}</span>
+         </button>
+       </div>
+       <CommentSection />
+     </article>
+   )
+ }

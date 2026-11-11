@@ -94,4 +94,112 @@ export const inhabitantPosts: Record<string, InhabitantPost[]> = {
       createdAt: 'hace 1 d',
     },
   ],
+  lila: [
+    {
+      id: 'p-lila-1',
+      title: 'Mi Batido de Tarta de Limón',
+      content: 'Probando mi Batido de Tarta de Limón favorito. Quedó refrescante, ácido y dulce al mismo tiempo. Ideal para un caluroso día en el bosque. 🥤',
+      image: '🥤',
+      likes: 22,
+      comments: 2,
+      createdAt: 'hace 1 d',
+      replies: [
+        { author: 'Tadeo Búho', text: 'Lo seguí paso a paso y quedó delicioso, Lila. Mide dos veces, sirve una.' },
+        { author: 'Rock Oso', text: 'A mí me encanta con crema batida extra por encima. 🐻' },
+      ],
+    },
+    {
+      id: 'p-lila-2',
+      title: 'Lasaña Picante',
+      content: 'La Lasaña Picante quedó con un toque justo de chorizo y pimiento verde. Perfecta para compartir en el foro. 🍝',
+      image: '🍝',
+      likes: 18,
+      comments: 1,
+      createdAt: 'hace 3 d',
+      replies: [
+        { author: 'Renato Zorro', text: '¡Qué travesura tan rica se ve! Me la apunto para el fin de semana. 🦊' },
+      ],
+    },
+  ],
+  renato: [
+    {
+      id: 'p-renato-1',
+      title: 'Tamales de Carne con Mole',
+      content: 'Después de 10 horas de cocción lenta, los tamales quedaron deshebrados y con un mole profundo y especiado. 🫔',
+      image: '🫔',
+      likes: 25,
+      comments: 2,
+      createdAt: 'hace 2 d',
+      replies: [
+        { author: 'Lila Castaña', text: 'El olor se siente desde aquí, Renato. ¡Quiero uno!' },
+        { author: 'Tadeo Búho', text: 'Precisamente 10 horas. La paciencia es el ingrediente secreto.' },
+      ],
+    },
+    {
+      id: 'p-renato-2',
+      title: 'Pollo a la Naranja',
+      content: 'Probando el Pollo a la Naranja. Dulce, salado y con esa costra crujiente que se mantiene incluso bañada en salsa. 🍊',
+      image: '🍊',
+      likes: 19,
+      comments: 1,
+      createdAt: 'hace 4 d',
+      replies: [
+        { author: 'Rock Oso', text: 'Se ve equilibrado y sabroso. ¿Hay sobra para un oso golosino?' },
+      ],
+    },
+  ],
+  rock: [
+    {
+      id: 'p-rock-1',
+      title: 'Volovanes de Natilla de Coco y Chocolate',
+      content: 'Crujientes por fuera, cremosos por dentro. Siempre guardo una galleta — o un volován — en el bolsillo. 🍫',
+      image: '🍫',
+      likes: 21,
+      comments: 2,
+      createdAt: 'hace 1 d',
+      replies: [
+        { author: 'Tadeo Búho', text: 'El contraste de texturas está bien calculado, Rock.' },
+        { author: 'Lila Castaña', text: 'Me encanta el coco rallado por encima. 🐿️' },
+      ],
+    },
+    {
+      id: 'p-rock-2',
+      title: 'Tarta de Bayas',
+      content: 'Mi Tarta de Bayas sin horno, con base de galleta María y relleno sedoso. Llena de color y sabor a fruta fresca. 🍰',
+      image: '🍰',
+      likes: 17,
+      comments: 1,
+      createdAt: 'hace 5 d',
+      replies: [
+        { author: 'Renato Zorro', text: 'Se ve irresistible. ¿Hay un pedacito para un zorro pícaro? 🦊' },
+      ],
+    },
+  ],
+  tadeo: [
+    {
+      id: 'p-tadeo-1',
+      title: 'Timbal de Quinua con Pollo',
+      content: 'Mide cada gramo y cuenta cada minuto. Timbal de Quinua con Pollo listo para servir. Equilibrado y nutritivo. 🍛',
+      image: '🍛',
+      likes: 16,
+      comments: 2,
+      createdAt: 'hace 3 d',
+      replies: [
+        { author: 'Rock Oso', text: 'Se ve equilibrado y nutritivo, como todo lo que haces, Tadeo.' },
+        { author: 'Renato Zorro', text: 'Un poco formal para mi gusto, pero se ve rico. 🦊' },
+      ],
+    },
+    {
+      id: 'p-tadeo-2',
+      title: 'Risotto de Quinua y Champiñones',
+      content: 'Tuesto la quinua en seco antes de cocerla para potenciar su sabor a nuez. El vino blanco se evapora dejando solo su esencia. 🍚',
+      image: '🍚',
+      likes: 14,
+      comments: 1,
+      createdAt: 'hace 6 d',
+      replies: [
+        { author: 'Lila Castaña', text: '¡La precisión se nota en cada bocado, Tadeo!' },
+      ],
+    },
+  ],
 }

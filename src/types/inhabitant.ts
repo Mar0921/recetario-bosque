@@ -6,4 +6,5 @@ export interface InhabitantPost {
   likes: number
   comments: number
   createdAt: string
+  replies?: { author: string; text: string }[]
 }

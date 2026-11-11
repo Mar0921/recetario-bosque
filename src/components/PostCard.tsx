@@ -1,14 +1,26 @@
 import { MessageSquare, ThumbsUp } from 'lucide-react'
+import { inhabitants } from '../data/inhabitants'
 
 interface PostCardProps {
   post: any
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const authorInhabitant = post.inhabitantId
+    ? inhabitants.find((i) => i.id === post.inhabitantId)
+    : inhabitants.find((i) => i.name === post.author)
   return (
     <article className="paper-card p-5 mb-5 border-black/20">
       <div className="flex items-start gap-3 mb-3">
-        <span className="text-2xl shrink-0">{post.avatar}</span>
+        {authorInhabitant ? (
+          <img
+            src={`/pf/${authorInhabitant.id}.jpeg`}
+            alt={post.author}
+            className="w-10 h-10 rounded-full object-cover shrink-0 border border-black/20"
+          />
+        ) : (
+          <span className="text-2xl shrink-0">{post.avatar}</span>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-basename gap-2 mb-1">
             <span className="font-bold text-[#5d4a3a] text-sm">{post.author}</span>
@@ -26,7 +38,7 @@ export function PostCard({ post }: PostCardProps) {
         </button>
         <button className="flex items-center gap-1.5 hover:text-[#2d6a4f] transition-colors">
           <MessageSquare className="w-3 h-3" />
-          <span>{post.comments.length}</span>
+          <span>{Array.isArray(post.comments) ? post.comments.length : post.comments}</span>
         </button>
       </div>
     </article>
