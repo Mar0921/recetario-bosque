@@ -126,13 +126,17 @@ export function HabitantProfile() {
               <Heart className="w-4 h-4" />
               Mejor amigo del foro
             </h4>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-white border border-black/20 flex items-center justify-center text-xl">
-                {bestFriend?.avatar}
+            <Link to={`/habitante/${bestFriend?.id}`} className="block">
+              <div className="flex flex-col items-center gap-2 group">
+                <img
+                  src={`/pf/${bestFriend?.id}.jpeg`}
+                  alt={bestFriend?.name}
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="font-bold text-[#5d4a3a] text-sm group-hover:text-[#5d4a3a]/80 transition-colors">{bestFriend?.name}</div>
+                <div className="text-xs text-[#5d4a3a]/60">{bestFriend?.species}</div>
               </div>
-              <div className="font-bold text-[#5d4a3a] text-sm">{bestFriend?.name}</div>
-              <div className="text-xs text-[#5d4a3a]/60">{bestFriend?.species}</div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

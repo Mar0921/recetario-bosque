@@ -165,17 +165,21 @@ function SpotMarker({
       title={spot.name}
     >
       <div className="relative">
-        <div
-          className={`overflow-hidden border-4 border-black shadow-lg group-hover:scale-105 transition-transform ${
-            selected ? 'ring-4 ring-black' : ''
-          } ${isHouse ? 'w-20 h-16 rounded-xl bg-white' : 'w-14 h-14 rounded-full bg-white flex items-center justify-center text-2xl'}`}
-        >
-          {isHouse ? (
-            <img src={spot.image} alt={spot.name} className="w-full h-full object-cover" />
-          ) : (
-            spot.image
-          )}
-        </div>
+        {isHouse ? (
+          <img
+            src={spot.image}
+            alt={spot.name}
+            className="w-28 h-20 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform"
+          />
+        ) : (
+          <div
+            className={`overflow-hidden border-4 border-black shadow-lg group-hover:scale-105 transition-transform ${
+              selected ? 'ring-4 ring-black' : ''
+            } w-14 h-14 rounded-full bg-white flex items-center justify-center text-2xl`}
+          >
+            {spot.image}
+          </div>
+        )}
         <img
           src={`/pf/${spot.inhabitantId}.jpeg`}
           alt={spot.character}
