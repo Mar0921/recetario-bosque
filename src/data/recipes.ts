@@ -20,6 +20,7 @@ export interface Recipe {
   lore: string
   loreUnlocked: boolean
   image: string
+  photo: string
 }
 
 export const recipes: Recipe[] = [
@@ -60,6 +61,7 @@ export const recipes: Recipe[] = [
     lore: 'Consejo profesional: comienza con bayas congeladas para obtener un relleno suave y estable, y un color vibrante. Es importante usar bayas congeladas para evitar que la mezcla se corte durante la cocción debido a la acidez de la fruta. Puedes sustituir las bayas por mango.',
     loreUnlocked: false,
     image: '🍰',
+    photo: '/PLATOS/tarta_bayas.png',
   },
   {
     id: 'batido-tarta-limon',
@@ -93,6 +95,7 @@ export const recipes: Recipe[] = [
     lore: 'Pêche quería llevar su tarta de limón favorita al picnic del bosque, pero hacía demasiado calor. La licuadora fue su mejor aliada.',
     loreUnlocked: false,
     image: '🥤',
+    photo: '/PLATOS/batido_tarta_limon.png',
   },
   {
     id: 'club-sandwich-vegetales',
@@ -139,6 +142,7 @@ export const recipes: Recipe[] = [
     lore: 'Noa calculó la proporción perfecta de crujiente y cremoso para que cada capa se mantenga en su lugar sin desmoronarse.',
     loreUnlocked: false,
     image: '🥪',
+    photo: '/PLATOS/club_sandwich_vegetales.png',
   },
   {
     id: 'ensalada-papas-hierbas',
@@ -183,6 +187,7 @@ export const recipes: Recipe[] = [
     lore: 'Noa midió el tamaño exacto de los cubos de papa (1.5 pulgadas) para que absorban el aderezo sin deshacerse. La precisión es amor.',
     loreUnlocked: false,
     image: '🥔',
+    photo: '/PLATOS/ensalada_de_papas.png',
   },
   {
     id: 'gelatina-fresas-crema',
@@ -227,6 +232,7 @@ export const recipes: Recipe[] = [
     lore: 'Recuerda mantener la licuadora encendida mientras agregas la grenetina disuelta para integrar perfectamente. Puedes sustituir las fresas por duraznos.',
     loreUnlocked: false,
     image: '🍮',
+    photo: '/PLATOS/gelatina_fresa_crema.png',
   },
   {
     id: 'lasagna-picante',
@@ -290,6 +296,7 @@ export const recipes: Recipe[] = [
     lore: 'El café soluble intensifica el sabor de la carne sin dejar sabor a café. Noa lo descubrió por accidente al confundir los frascos.',
     loreUnlocked: false,
     image: '🍝',
+    photo: '/PLATOS/lasaña_picante.png',
   },
   {
     id: 'risotto-quinua-champinones',
@@ -336,6 +343,7 @@ export const recipes: Recipe[] = [
     lore: 'Noa tuesta la quinua en seco antes de cocerla para potenciar su sabor a nuez. El vino blanco se evapora dejando solo su esencia.',
     loreUnlocked: false,
     image: '🍚',
+    photo: '/PLATOS/risotto_quinoa_champiñones.png',
   },
   {
     id: 'pollo-naranja',
@@ -398,6 +406,7 @@ export const recipes: Recipe[] = [
     lore: 'El doble empanizado (maicena → huevo → harina de maíz) crea una costra que se mantiene crujiente incluso bañada en salsa.',
     loreUnlocked: false,
     image: '🍊',
+    photo: '/PLATOS/pollo_naranja.png',
   },
   {
     id: 'empanadas-res-papas',
@@ -468,6 +477,7 @@ export const recipes: Recipe[] = [
     lore: 'Brisa fríe una empanada de prueba primero: si burbujea rápido, el aceite está listo. El tenedor sella los bordes y evita que se abran.',
     loreUnlocked: false,
     image: '🥟',
+    photo: '/PLATOS/empanadas_carne_y_papas.png',
   },
   {
     id: 'volovanes-natilla-coco-chocolate',
@@ -523,6 +533,7 @@ export const recipes: Recipe[] = [
     lore: 'Consejo del chef: Refrigerar la natilla restante para disfrutar en otra ocasión. O, haz 12 volovanes y usa toda la natilla. Para esto necesitarás un paquete adicional de hojaldre y otra bandeja para hornear.',
     loreUnlocked: false,
     image: '🍫',
+    photo: '/PLATOS/volovanes_natillacoco_chocolate.png',
   },
   {
     id: 'timbal-quinua-pollo',
@@ -575,6 +586,7 @@ export const recipes: Recipe[] = [
     lore: 'Brisa usa un molde de metal caliente para que el timbal se desmolde perfecto. El aguacate fresco arriba aporta cremosidad fría al contraste.',
     loreUnlocked: false,
     image: '🍛',
+    photo: '/PLATOS/timbal_quinoa_pollo.png',
   },
   {
     id: 'tamales-carne-mole',
@@ -642,6 +654,7 @@ export const recipes: Recipe[] = [
     lore: 'El café y el chocolate en la cocción lenta profundizan el sabor de la carne sin saber a postre. Brisa susurra a la olla mientras cocina.',
     loreUnlocked: false,
     image: '🫔',
+    photo: '/PLATOS/tamales_carne_mole.png',
   },
 ]
 

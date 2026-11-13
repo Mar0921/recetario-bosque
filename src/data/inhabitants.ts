@@ -44,7 +44,7 @@ export const inhabitants: Inhabitant[] = [
     birthday: '12 de octubre',
     difficulty: 'facil',
     houseStyle: 'tejado-hoja-seca',
-    recipes: { facil: 'batido-tarta-limon', medio: 'lasagna-picante', dificil: 'empanadas-res-papas' },
+    recipes: { facil: 'tarta-bayas', medio: 'gelatina-fresas-crema', dificil: 'volovanes-natilla-coco-chocolate' },
   },
   {
     id: 'renato',
@@ -62,7 +62,7 @@ export const inhabitants: Inhabitant[] = [
     birthday: '24 de julio',
     difficulty: 'dificil',
     houseStyle: 'tejado-teja',
-    recipes: { facil: 'club-sandwich-vegetales', medio: 'pollo-naranja', dificil: 'tamales-carne-mole' },
+    recipes: { facil: 'batido-tarta-limon', medio: 'lasagna-picante', dificil: 'empanadas-res-papas' },
   },
   {
     id: 'rock',
@@ -80,7 +80,7 @@ export const inhabitants: Inhabitant[] = [
     birthday: '5 de noviembre',
     difficulty: 'facil',
     houseStyle: 'tejado-miel',
-    recipes: { facil: 'tarta-bayas', medio: 'gelatina-fresas-crema', dificil: 'volovanes-natilla-coco-chocolate' },
+    recipes: { facil: 'club-sandwich-vegetales', medio: 'pollo-naranja', dificil: 'tamales-carne-mole' },
   },
   {
     id: 'tadeo',

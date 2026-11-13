@@ -78,7 +78,11 @@ export function RecipePage() {
       {/* Recipe header */}
       <section className={`p-8 rounded-3xl shadow-lg transition-all duration-500 hover:shadow-xl ${recipe.difficulty === 'facil' ? 'card-pink' : recipe.difficulty === 'medio' ? 'card-mint' : 'card-cream'}`}>
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          <div className="text-6xl shrink-0 animate-float">{recipe.image}</div>
+          <img
+            src={recipe.photo}
+            alt={recipe.title}
+            className="max-w-50 max-h-50 w-auto h-auto object-contain shrink-0 self-center animate-float"
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-3">
               <span className={recipe.difficulty === 'facil' ? 'bg-[#f4c2c2] text-[#8d4a4a]' : recipe.difficulty === 'medio' ? 'bg-[#d1f2eb] text-[#2d6a4f]' : 'bg-[#ffe0b2] text-[#b45309]'} style={{ transitionDelay: staggerDelay(0) }}>

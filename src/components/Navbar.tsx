@@ -64,7 +64,8 @@ export function MusicPlayer() {
   }, [playing, muted])
 
   return (
-    <div className="fixed bottom-6 right-6 wood-border p-3 bg-white rounded-full shadow-lg">
+    // Agregamos z-[100] aquí para que siempre esté por encima de todo
+    <div className="fixed bottom-6 right-6 z-[100] wood-border p-3 bg-white rounded-full shadow-lg">
       <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
       <button
         onClick={() => setPlaying(!playing)}
@@ -99,3 +100,4 @@ export function MusicPlayer() {
     </div>
   )
 }
+
