@@ -234,7 +234,17 @@ export function HabitantProfile() {
                   </div>
                 </div>
                 <p className="text-[#5d4a3a]/80 text-sm mb-3">{post.content}</p>
-                <div className="text-2xl mb-3">{post.image}</div>
+                <div className="mb-3">
+                  {recipeById(post.recipeId)?.photo ? (
+                    <img
+                      src={recipeById(post.recipeId)!.photo}
+                      alt={post.title}
+                      className="w-full max-h-64 object-cover rounded-xl border border-black/10"
+                    />
+                  ) : (
+                    <div className="text-2xl">{post.image}</div>
+                  )}
+                </div>
                 {post.replies && post.replies.length > 0 && (
                   <div className="mb-3">
                     <div className="text-[10px] font-bold text-[#5d4a3a]/60 uppercase tracking-wider mb-1">Comentarios</div>

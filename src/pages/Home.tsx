@@ -2,11 +2,13 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BookOpen } from 'lucide-react'
 import { cn } from '../lib/utils'
-import { recipes } from '../data/recipes'
+import { recipes, recipeById } from '../data/recipes'
 import { inhabitants } from '../data/inhabitants'
 import { inhabitantPosts } from '../data/inhabitant-posts'
 import { RecipeCard } from '../components/RecipeCard'
 import { CommentSection } from '../components/CommentSection'
+import { useUserPosts, formatRelative, type UserPost } from '../lib/user-posts'
+import { DeletePostButton } from '../components/DeleteButton'
 
 const difficultyLabels: Record<string, { label: string; icon: string; color: string }> = {
   facil: { label: 'Fácil', icon: '🟢', color: '#f4c2c2' },
@@ -22,10 +24,61 @@ function parseRelativeTime(str: string): number {
   return unit === 'h' ? value : value * 24
 }
 
+function buildPosts(userPosts: UserPost[]) {
+  const all: any[] = []
+
+  // Publicaciones de los habitantes
+  Object.entries(inhabitantPosts).forEach(([inhabitantId, posts]) => {
+    const inhabitant = inhabitants.find((i) => i.id === inhabitantId)
+    if (!inhabitant) return
+
+    posts.forEach((post: any) => {
+      all.push({
+        id: post.id,
+        author: inhabitant.name,
+        avatar: inhabitant.avatar,
+        inhabitantId,
+        title: post.title,
+        content: post.content,
+        recipeId: post.recipeId,
+        likes: post.likes,
+        comments: post.comments,
+        createdAt: post.createdAt,
+        replies: post.replies,
+        hoursAgo: parseRelativeTime(post.createdAt),
+        isOwn: false,
+      })
+    })
+  })
+
+  // Publicaciones del usuario
+  userPosts.forEach((p) => {
+    all.push({
+      id: p.id,
+      author: 'Tú',
+      avatar: '👤',
+      title: p.title,
+      content: p.content,
+      recipeId: p.recipeId,
+      likes: p.likes,
+      comments: p.comments,
+      createdAt: formatRelative(p.createdAt),
+      replies: [],
+      hoursAgo: (Date.now() - p.createdAt) / 3_600_000,
+      isOwn: true,
+    })
+  })
+
+  // Las más recientes primero
+  all.sort((a, b) => a.hoursAgo - b.hoursAgo)
+  return all
+}
+
 export function Home() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('todos')
   const navigate = useNavigate()
   const videoRef = useRef<HTMLVideoElement>(null)
+  const { posts: userPosts, removePost } = useUserPosts()
 
   const LOOP_START = 5
   const LOOP_END = 7
@@ -50,9 +103,11 @@ export function Home() {
       ? recipes
       : recipes.filter((r) => r.difficulty === selectedDifficulty)
 
+  const posts = buildPosts(userPosts)
+
   return (
     <div className="w-full flex flex-col">
-      {/* 
+      {/*
         El video ocupa el 100% del ancho (w-full) y su altura es automática (h-auto).
         z-0 asegura que el botón de música flotante se quede por encima.
       */}
@@ -73,7 +128,6 @@ export function Home() {
 
       {/* CONTENEDOR DEL RESTO DEL CONTENIDO */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 space-y-8 w-full">
-        
         {/* Panel de bienvenida separado del video */}
         <section className="bg-pastel-paper p-8 text-center rounded-3xl border border-black/20 shadow-lg">
           <h2 className="text-3xl font-bold text-baloon text-[#5d4a3a] mb-2">
@@ -88,12 +142,23 @@ export function Home() {
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             {['todos', 'facil', 'medio', 'dificil'].map((id) => {
               const diff = difficultyLabels[id]
-              const buttonVariant = id === 'todos' ? 'btn-pastel btn-cream' : id === 'facil' ? 'btn-pastel btn-pink' : id === 'medio' ? 'btn-pastel btn-mint' : 'btn-pastel btn-peach'
+              const buttonVariant =
+                id === 'todos'
+                  ? 'btn-pastel btn-cream'
+                  : id === 'facil'
+                    ? 'btn-pastel btn-pink'
+                    : id === 'medio'
+                      ? 'btn-pastel btn-mint'
+                      : 'btn-pastel btn-peach'
               return (
                 <button
                   key={id}
                   onClick={() => setSelectedDifficulty(id)}
-                  className={cn(buttonVariant, 'px-5 py-2 text-sm font-bold', selectedDifficulty === id ? 'scale-110 ring-2 ring-black' : '')}
+                  className={cn(
+                    buttonVariant,
+                    'px-5 py-2 text-sm font-bold',
+                    selectedDifficulty === id ? 'scale-110 ring-2 ring-black' : '',
+                  )}
                 >
                   {id === 'todos' ? '🌲' : diff?.icon} {id === 'todos' ? 'Todas' : diff?.label}
                 </button>
@@ -105,9 +170,7 @@ export function Home() {
         <section className="paper-card p-6 border-black/20">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-baloon text-[#5d4a3a]">
-                Recetas del bosque
-              </h3>
+              <h3 className="text-2xl font-bold text-baloon text-[#5d4a3a]">Recetas del bosque</h3>
               <p className="text-sm text-[#5d4a3a]/60">
                 {filteredRecipes.length} recetas disponibles
               </p>
@@ -115,16 +178,14 @@ export function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {filteredRecipes.map((recipe: any) => {
-              return (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  onSelect={(rid: string) => navigate(`/receta/${rid}`)}
-                  unlocked={true}
-                />
-              )
-            })}
+            {filteredRecipes.map((recipe: any) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                onSelect={(rid: string) => navigate(`/receta/${rid}`)}
+                unlocked={true}
+              />
+            ))}
           </div>
 
           <div className="mt-6 text-xs text-[#5d4a3a]/50 text-center italic">
@@ -145,45 +206,15 @@ export function Home() {
               Publicar plato
             </Link>
           </div>
+
           <div className="space-y-4">
-            {(() => {
-              const allPosts: any[] = []
-              Object.entries(inhabitantPosts).forEach(([inhabitantId, posts]) => {
-                const inhabitant = inhabitants.find((i) => i.id === inhabitantId)
-                if (!inhabitant) return
-                posts.forEach((post) => {
-                  allPosts.push({
-                    ...post,
-                    author: inhabitant.name,
-                    avatar: inhabitant.avatar,
-                    inhabitantId,
-                  })
-                })
-              })
-              allPosts.sort((a, b) => {
-                const timeA = parseRelativeTime(a.createdAt)
-                const timeB = parseRelativeTime(b.createdAt)
-                return timeA - timeB
-              })
-              return allPosts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={{
-                    id: post.id,
-                    author: post.author,
-                    avatar: post.avatar,
-                    inhabitantId: post.inhabitantId,
-                    title: post.title,
-                    content: post.content,
-                    image: post.image,
-                    likes: post.likes,
-                    comments: post.comments,
-                    createdAt: post.createdAt,
-                    replies: post.replies,
-                  }}
-                />
-              ))
-            })()}
+            {posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onDelete={post.isOwn ? () => removePost(post.id) : undefined}
+              />
+            ))}
           </div>
         </section>
       </div>
@@ -191,10 +222,12 @@ export function Home() {
   )
 }
 
-function PostCard({ post }: { post: any }) {
+function PostCard({ post, onDelete }: { post: any; onDelete?: () => void }) {
   const authorInhabitant = post.inhabitantId
     ? inhabitants.find((i) => i.id === post.inhabitantId)
     : inhabitants.find((i) => i.name === post.author)
+  const relatedRecipe: any = post.recipeId ? recipeById(post.recipeId) : undefined
+
   return (
     <article className="paper-card p-5 border-black/20">
       <div className="flex items-start gap-3 mb-3">
@@ -205,25 +238,47 @@ function PostCard({ post }: { post: any }) {
             className="w-10 h-10 rounded-full object-cover shrink-0 border border-black/20"
           />
         ) : (
-          <span className="text-2xl shrink-0">{post.avatar}</span>
+          <span className="w-10 h-10 rounded-full bg-[#f7f3ea] border border-black/20 flex items-center justify-center text-xl shrink-0">
+            {post.avatar}
+          </span>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-basename gap-2 mb-1">
+          <div className="flex items-baseline gap-2 mb-1 flex-wrap">
             <span className="font-bold text-[#5d4a3a] text-sm">{post.author}</span>
+            {onDelete && (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#d1f2eb] text-[#2d6a4f] border border-black/10">
+                Tuya
+              </span>
+            )}
             <span className="text-xs text-[#5d4a3a]/50">{post.createdAt}</span>
           </div>
           <h3 className="text-lg font-bold text-baloon text-[#5d4a3a]">{post.title}</h3>
         </div>
       </div>
-      <p className="text-[#5d4a3a] mb-4 leading-relaxed">{post.content}</p>
-      <div className="text-2xl mb-4">{post.image}</div>
+
+      <p className="text-[#5d4a3a] mb-4 leading-relaxed whitespace-pre-line">{post.content}</p>
+
+      {relatedRecipe && (
+        <Link
+          to={`/receta/${relatedRecipe.id}`}
+          className="inline-flex items-center gap-1.5 mb-4 px-3 py-1 rounded-full bg-[#f7f3ea] border border-black/10 text-xs font-semibold text-[#5d4a3a] hover:bg-[#efe8d8] transition-colors"
+        >
+          🍽️ Receta: {relatedRecipe.title}
+        </Link>
+      )}
+
       {post.replies && post.replies.length > 0 && (
-        <div className="mb-3">
-          <div className="text-[10px] font-bold text-[#5d4a3a]/60 uppercase tracking-wider mb-1">Comentarios</div>
+        <div className="mb-3 space-y-2">
+          <div className="text-[10px] font-bold text-[#5d4a3a]/60 uppercase tracking-wider">
+            Comentarios
+          </div>
           {post.replies.map((reply: { author: string; text: string }, i: number) => {
             const replyAuthor = inhabitants.find((inh) => inh.name === reply.author)
             return (
-              <div key={i} className="p-2 bg-[#f7f3ea] border border-black/10 rounded-lg text-sm text-[#5d4a3a] leading-relaxed flex items-start gap-2">
+              <div
+                key={i}
+                className="p-2 bg-[#f7f3ea] border border-black/10 rounded-lg text-sm text-[#5d4a3a] leading-relaxed flex items-start gap-2"
+              >
                 {replyAuthor ? (
                   <img
                     src={`/pf/${replyAuthor.id}.jpeg`}
@@ -239,6 +294,7 @@ function PostCard({ post }: { post: any }) {
           })}
         </div>
       )}
+
       <div className="flex items-center gap-4 text-xs text-[#5d4a3a]/60 border-t border-black/10 pt-3">
         <button className="flex items-center gap-1.5 hover:text-[#8d4a4a] transition-colors">
           <span>❤️</span> <span>{post.likes}</span>
@@ -246,7 +302,13 @@ function PostCard({ post }: { post: any }) {
         <button className="flex items-center gap-1.5 hover:text-[#2d6a4f] transition-colors">
           <span>💬</span> <span>{post.comments}</span>
         </button>
+        {onDelete && (
+          <div className="ml-auto">
+            <DeletePostButton onConfirm={onDelete} />
+          </div>
+        )}
       </div>
+
       <CommentSection />
     </article>
   )

@@ -1,5 +1,6 @@
 export interface InhabitantPost {
   id: string
+  recipeId: string
   title: string
   content: string
   image: string

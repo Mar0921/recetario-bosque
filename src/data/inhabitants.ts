@@ -102,5 +102,18 @@ export const inhabitants: Inhabitant[] = [
   },
 ]
 
+export const inhabitantImages: Record<InhabitantId, string> = {
+  lila: '/pf/lila.jpeg',
+  renato: '/pf/renato.jpeg',
+  rock: '/pf/rock.jpeg',
+  tadeo: '/pf/tadeo.jpeg',
+}
+
+export const inhabitantImageById = (id: InhabitantId): string =>
+  inhabitantImages[id]
+
+export const inhabitantForRecipe = (recipeId: string): Inhabitant | undefined =>
+  inhabitants.find((inh) => Object.values(inh.recipes).includes(recipeId))
+
 export const inhabitantById = (id: InhabitantId): Inhabitant =>
   inhabitants.find((i) => i.id === id)!
