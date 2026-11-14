@@ -8,7 +8,7 @@ import { inhabitantPosts } from '../data/inhabitant-posts'
 import { RecipeCard } from '../components/RecipeCard'
 import { CommentSection } from '../components/CommentSection'
 import { useUserPosts, formatRelative, type UserPost } from '../lib/user-posts'
-import { DeletePostButton } from '../components/DeleteButton'
+import { DeletePostButton } from '../components/DeletePostButton'
 
 const difficultyLabels: Record<string, { label: string; icon: string; color: string }> = {
   facil: { label: 'Fácil', icon: '🟢', color: '#f4c2c2' },
