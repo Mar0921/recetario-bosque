@@ -13,6 +13,21 @@ import { recipeById } from '../data/recipes'
 import { inhabitantImageById, inhabitantForRecipe } from '../data/inhabitants'
 import { useSavedRecipes } from '../lib/saved-recipes'
 
+const recipeStepFolders: Record<string, string> = {
+  'tarta-bayas': 'Tarta_de_bayas',
+  'batido-tarta-limon': 'batido_tarta_de_limon',
+  'club-sandwich-vegetales': 'club_sandwich_de_vegetales',
+  'ensalada-papas-hierbas': 'Ensalada_cremosa_de_papas_con_hierbas',
+  'gelatina-fresas-crema': 'gelatina_de_fresas_con_crema',
+  'lasagna-picante': 'lasaña picante',
+  'risotto-quinua-champinones': 'Risotto de Quinua y Champiñones',
+  'pollo-naranja': 'pollo a la naranja',
+  'empanadas-res-papas': 'Empanadas de Res y Papas',
+  'volovanes-natilla-coco-chocolate': 'Volovánes de Natilla de Coco y Chocolate',
+  'timbal-quinua-pollo': 'timbal de quinua con pollo',
+  'tamales-carne-mole': 'Tamales de Carne Deshebrada con Salsa de Mole',
+}
+
 const staggerDelay = (index: number) => `${Math.min(index * 80, 400)}ms`
 
 export function RecipePage() {
@@ -221,7 +236,19 @@ export function RecipePage() {
                 >
                   {i + 1}
                 </span>
-                <p className="relative pl-2 border-l-2 border-black/10">{step}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="relative pl-2 border-l-2 border-black/10">{step}</p>
+                  {recipeStepFolders[recipe.id] && (
+                    <img
+                      src={encodeURI(`/Recetas/${recipeStepFolders[recipe.id]}/paso_${i + 1}.jpg`)}
+                      alt={`Paso ${i + 1}`}
+                      className="mt-3 w-full h-auto object-contain mx-auto"
+                      onError={(e) => {
+                        ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                      }}
+                    />
+                  )}
+                </div>
               </li>
             ))}
           </ol>
