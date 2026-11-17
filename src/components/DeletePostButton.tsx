@@ -3,9 +3,11 @@ import { Trash2 } from 'lucide-react'
 
 interface DeletePostButtonProps {
   onConfirm: () => void | Promise<void>
+  /** Texto accesible, p. ej. "Eliminar comentario" */
+  label?: string
 }
 
-export function DeletePostButton({ onConfirm }: DeletePostButtonProps) {
+export function DeletePostButton({ onConfirm, label = 'Eliminar publicación' }: DeletePostButtonProps) {
   const [confirming, setConfirming] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
@@ -86,7 +88,7 @@ export function DeletePostButton({ onConfirm }: DeletePostButtonProps) {
           ref={triggerRef}
           type="button"
           onClick={() => setConfirming(true)}
-          aria-label="Eliminar publicación"
+          aria-label={label}
           className="inline-flex items-center gap-1.5 text-[#5d4a3a]/50 hover:text-[#8d4a4a] transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />

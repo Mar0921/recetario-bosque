@@ -1,19 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { BookOpen } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { recipes, recipeById } from '../data/recipes'
 import { inhabitants } from '../data/inhabitants'
 import { inhabitantPosts } from '../data/inhabitant-posts'
 import { RecipeCard } from '../components/RecipeCard'
 import { CommentSection } from '../components/CommentSection'
-import { useUserPosts, formatRelative, type UserPost } from '../lib/user-posts'
-import { DeletePostButton } from '../components/DeletePostButton'
+import { RecipeCommentThread } from '../components/RecipeCommentThread'
+import { useRecipeComments } from '../lib/recipe-comments'
 
-const difficultyLabels: Record<string, { label: string; icon: string; color: string }> = {
-  facil: { label: 'Fácil', icon: '🟢', color: '#f4c2c2' },
-  medio: { label: 'Medio', icon: '🟡', color: '#d1f2eb' },
-  dificil: { label: 'Difícil', icon: '🔴', color: '#ffe0b2' },
+const difficultyLabels: Record<string, { label: string; color: string }> = {
+  facil: { label: 'Fácil', color: '#f4c2c2' },
+  medio: { label: 'Medio', color: '#d1f2eb' },
+  dificil: { label: 'Difícil', color: '#ffe0b2' },
 }
 
 function parseRelativeTime(str: string): number {
@@ -24,7 +23,7 @@ function parseRelativeTime(str: string): number {
   return unit === 'h' ? value : value * 24
 }
 
-function buildPosts(userPosts: UserPost[]) {
+function buildPosts() {
   const all: any[] = []
 
   // Publicaciones de los habitantes
@@ -46,26 +45,7 @@ function buildPosts(userPosts: UserPost[]) {
         createdAt: post.createdAt,
         replies: post.replies,
         hoursAgo: parseRelativeTime(post.createdAt),
-        isOwn: false,
       })
-    })
-  })
-
-  // Publicaciones del usuario
-  userPosts.forEach((p) => {
-    all.push({
-      id: p.id,
-      author: 'Tú',
-      avatar: '👤',
-      title: p.title,
-      content: p.content,
-      recipeId: p.recipeId,
-      likes: p.likes,
-      comments: p.comments,
-      createdAt: formatRelative(p.createdAt),
-      replies: [],
-      hoursAgo: (Date.now() - p.createdAt) / 3_600_000,
-      isOwn: true,
     })
   })
 
@@ -78,7 +58,6 @@ export function Home() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('todos')
   const navigate = useNavigate()
   const videoRef = useRef<HTMLVideoElement>(null)
-  const { posts: userPosts, removePost } = useUserPosts()
 
   const LOOP_START = 5
   const LOOP_END = 7
@@ -103,7 +82,7 @@ export function Home() {
       ? recipes
       : recipes.filter((r) => r.difficulty === selectedDifficulty)
 
-  const posts = buildPosts(userPosts)
+  const posts = buildPosts()
 
   return (
     <div className="w-full flex flex-col">
@@ -137,7 +116,7 @@ export function Home() {
             Eres el protagonista de esta historia. Navega por las recetas divididas en tres
             dificultades y desbloquea secretos exclusivos de cada personaje mientras preparas
             sus platos. Los habitantes del bosque tienen sus propios perfiles con publicaciones
-            y playlist.
+            y playlist, y tú puedes dejar comentarios en sus recetas.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             {['todos', 'facil', 'medio', 'dificil'].map((id) => {
@@ -160,7 +139,7 @@ export function Home() {
                     selectedDifficulty === id ? 'scale-110 ring-2 ring-black' : '',
                   )}
                 >
-                  {id === 'todos' ? '🌲' : diff?.icon} {id === 'todos' ? 'Todas' : diff?.label}
+                  {id === 'todos' ? 'Todas' : diff?.label}
                 </button>
               )
             })}
@@ -194,26 +173,15 @@ export function Home() {
         </section>
 
         <section className="paper-card p-6 border-black/20 bg-white">
-          <div className="flex items-center justify-between mb-5">
+          <div className="mb-5">
             <h3 className="text-2xl font-bold text-baloon text-[#5d4a3a]">
               Publicaciones del bosque
             </h3>
-            <Link
-              to="/crear-publicacion"
-              className="btn-cute px-5 py-2.5 text-sm font-bold text-[#5d4a3a] flex items-center gap-2"
-            >
-              <BookOpen className="w-4 h-4" />
-              Publicar plato
-            </Link>
           </div>
 
           <div className="space-y-4">
             {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onDelete={post.isOwn ? () => removePost(post.id) : undefined}
-              />
+              <PostCard key={post.id} post={post} />
             ))}
           </div>
         </section>
@@ -222,11 +190,18 @@ export function Home() {
   )
 }
 
-function PostCard({ post, onDelete }: { post: any; onDelete?: () => void }) {
+function PostCard({ post }: { post: any }) {
+  const { comments } = useRecipeComments()
+
   const authorInhabitant = post.inhabitantId
     ? inhabitants.find((i) => i.id === post.inhabitantId)
     : inhabitants.find((i) => i.name === post.author)
   const relatedRecipe: any = post.recipeId ? recipeById(post.recipeId) : undefined
+
+  // Mis comentarios sobre esta receta se suman al contador de la publicación
+  const myCount = relatedRecipe
+    ? comments.filter((c) => c.recipeId === relatedRecipe.id).length
+    : 0
 
   return (
     <article className="paper-card p-5 border-black/20">
@@ -245,11 +220,6 @@ function PostCard({ post, onDelete }: { post: any; onDelete?: () => void }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-2 mb-1 flex-wrap">
             <span className="font-bold text-[#5d4a3a] text-sm">{post.author}</span>
-            {onDelete && (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#d1f2eb] text-[#2d6a4f] border border-black/10">
-                Tuya
-              </span>
-            )}
             <span className="text-xs text-[#5d4a3a]/50">{post.createdAt}</span>
           </div>
           <h3 className="text-lg font-bold text-baloon text-[#5d4a3a]">{post.title}</h3>
@@ -267,49 +237,21 @@ function PostCard({ post, onDelete }: { post: any; onDelete?: () => void }) {
         </Link>
       )}
 
-      {post.replies && post.replies.length > 0 && (
-        <div className="mb-3 space-y-2">
-          <div className="text-[10px] font-bold text-[#5d4a3a]/60 uppercase tracking-wider">
-            Comentarios
-          </div>
-          {post.replies.map((reply: { author: string; text: string }, i: number) => {
-            const replyAuthor = inhabitants.find((inh) => inh.name === reply.author)
-            return (
-              <div
-                key={i}
-                className="p-2 bg-[#f7f3ea] border border-black/10 rounded-lg text-sm text-[#5d4a3a] leading-relaxed flex items-start gap-2"
-              >
-                {replyAuthor ? (
-                  <img
-                    src={`/pf/${replyAuthor.id}.jpeg`}
-                    alt={reply.author}
-                    className="w-6 h-6 rounded-full object-cover shrink-0 border border-black/20"
-                  />
-                ) : null}
-                <div>
-                  <span className="font-bold text-[#3e2a20]">{reply.author}:</span> {reply.text}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
       <div className="flex items-center gap-4 text-xs text-[#5d4a3a]/60 border-t border-black/10 pt-3">
         <button className="flex items-center gap-1.5 hover:text-[#8d4a4a] transition-colors">
           <span>❤️</span> <span>{post.likes}</span>
         </button>
-        <button className="flex items-center gap-1.5 hover:text-[#2d6a4f] transition-colors">
-          <span>💬</span> <span>{post.comments}</span>
-        </button>
-        {onDelete && (
-          <div className="ml-auto">
-            <DeletePostButton onConfirm={onDelete} />
-          </div>
-        )}
+        <span className="flex items-center gap-1.5">
+          <span>💬</span> <span>{post.comments + myCount}</span>
+        </span>
       </div>
 
-      <CommentSection />
+      {/* Con receta: comentarios reales y guardados. Sin receta: el componente original */}
+      {relatedRecipe ? (
+        <RecipeCommentThread recipeId={relatedRecipe.id} replies={post.replies} />
+      ) : (
+        <CommentSection />
+      )}
     </article>
   )
 }

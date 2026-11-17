@@ -17,6 +17,22 @@ const IMAGES: Record<InhabitantId, { house: string; character: string }> = {
   tadeo: { house: 'tadeo_buho_casa.jpg', character: 'tadeo_buho_render.jpg' },
 }
 
+// Tonos oscuros para el nombre (alto contraste sobre fondos pastel)
+const nameColorByPersonality: Record<string, string> = {
+  dulce: '#5e2323',
+  formal: '#0f3a26',
+  energetico: '#6b2c00',
+  curioso: '#3b1266',
+  sabio: '#2e1d14',
+  travieso: '#6b2000',
+}
+const DEFAULT_NAME_COLOR = '#2e1d14'
+
+// Halo claro y sutil para que el texto se lea sin necesidad de un panel
+const textHalo: React.CSSProperties = {
+  textShadow: '0 1px 2px rgba(255,248,236,0.9), 0 0 8px rgba(255,248,236,0.7)',
+}
+
 // Desvanece los bordes de las imágenes para que no se vean como un rectángulo
 const softMask: React.CSSProperties = {
   WebkitMaskImage:
@@ -52,6 +68,8 @@ export function Habitants() {
   const current = entries[active]
   const inh = current.inh
   const accent = inh.accent
+  const nameColor =
+    nameColorByPersonality[(inh as any).personality as string] ?? DEFAULT_NAME_COLOR
 
   const goToProfile = (id: InhabitantId) => navigate(`/habitante/${id}`)
 
@@ -106,10 +124,16 @@ export function Habitants() {
       />
 
       <div className="relative z-10 px-4 pt-8 pb-6 flex flex-col items-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-baloon text-[#5d4a3a] text-center">
+        <h2
+          className="text-3xl sm:text-4xl font-bold text-baloon text-[#2e1d14] text-center"
+          style={textHalo}
+        >
           Habitantes del Bosque
         </h2>
-        <p className="text-[#5d4a3a]/70 text-center mt-1 text-sm sm:text-base">
+        <p
+          className="text-[#3e2a20] font-semibold text-center mt-1 text-sm sm:text-base"
+          style={textHalo}
+        >
           Haz clic en la casa para conocer a quien vive dentro
         </p>
 
@@ -155,7 +179,7 @@ export function Habitants() {
                       : `Seleccionar casa de ${name}`
                   }
                   title={isCenter ? `Ver perfil de ${name}` : undefined}
-                  className="group block w-full cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5d4a3a]/30 rounded-3xl"
+                  className="group block w-full cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-[#3e2a20]/50 rounded-3xl"
                   tabIndex={visible ? 0 : -1}
                 >
                   <img
@@ -200,7 +224,7 @@ export function Habitants() {
             type="button"
             onClick={prev}
             aria-label="Casa anterior"
-            className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/90 border-2 border-[#5d4a3a]/30 text-[#5d4a3a] shadow-lg flex items-center justify-center hover:scale-110 hover:bg-white active:scale-95 transition"
+            className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-[#3e2a20] text-[#3e2a20] shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
           >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 5 8 12 15 19" />
@@ -210,7 +234,7 @@ export function Habitants() {
             type="button"
             onClick={next}
             aria-label="Casa siguiente"
-            className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/90 border-2 border-[#5d4a3a]/30 text-[#5d4a3a] shadow-lg flex items-center justify-center hover:scale-110 hover:bg-white active:scale-95 transition"
+            className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border-2 border-[#3e2a20] text-[#3e2a20] shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition"
           >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 5 16 12 9 19" />
@@ -218,7 +242,7 @@ export function Habitants() {
           </button>
         </div>
 
-        {/* Información del habitante seleccionado */}
+        {/* Información del habitante seleccionado (sin panel) */}
         <div
           key={inh.id}
           className="mt-6 text-center max-w-xl"
@@ -226,18 +250,25 @@ export function Habitants() {
         >
           <h3
             className="text-4xl sm:text-5xl font-bold text-baloon"
-            style={{ color: inh.color }}
+            style={{ color: nameColor, ...textHalo }}
           >
             {inh.name}
           </h3>
-          <p className="text-sm font-semibold text-[#5d4a3a]/70 mt-1">
+          <div
+            className="mx-auto mt-2 mb-2 h-1.5 w-16 rounded-full"
+            style={{ backgroundColor: accent }}
+            aria-hidden="true"
+          />
+          <p className="text-base font-bold text-[#3e2a20]" style={textHalo}>
             {inh.species}
           </p>
-          <p className="text-[#5d4a3a]/60 italic mt-2">"{inh.catchphrase}"</p>
+          <p className="text-[#3e2a20] font-medium italic mt-2" style={textHalo}>
+            "{inh.catchphrase}"
+          </p>
 
           <Link
             to={`/habitante/${inh.id}`}
-            className="inline-flex items-center gap-2 mt-5 px-7 py-3 rounded-full border-2 bg-white font-bold text-[#5d4a3a] shadow-md hover:-translate-y-1 hover:shadow-lg transition-all"
+            className="inline-flex items-center gap-2 mt-5 px-7 py-3 rounded-full border-[3px] bg-white font-bold text-[#2e1d14] shadow-md hover:-translate-y-1 hover:shadow-lg transition-all"
             style={{ borderColor: accent }}
           >
             Entrar a la casa →
@@ -252,10 +283,10 @@ export function Habitants() {
               type="button"
               onClick={() => setActive(i)}
               aria-label={`Ir a la casa ${i + 1}`}
-              className="h-2.5 rounded-full transition-all duration-500"
+              className="h-2.5 rounded-full border border-black/30 transition-all duration-500"
               style={{
                 width: i === active ? 32 : 10,
-                backgroundColor: i === active ? accent : '#5d4a3a33',
+                backgroundColor: i === active ? accent : '#5d4a3a99',
               }}
             />
           ))}

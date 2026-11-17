@@ -11,29 +11,8 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: 'casa', label: 'Casas' },
 ]
 
-// Tamaño de las casas en el mapa (clases de Tailwind por breakpoint).
-// Más pequeño: 'w-12 sm:w-14 md:w-16' | Más grande: 'w-20 sm:w-24 md:w-28'
-const HOUSE_SIZE = 'w-16 sm:w-20 md:w-24'
-
-type Decor = { emoji: string; x: number; y: number; size: number; opacity?: number }
-
-const DECOR: Decor[] = [
-  { emoji: '🌞', x: 93, y: 7, size: 56, opacity: 0.95 },
-  { emoji: '☁️', x: 18, y: 7, size: 48, opacity: 0.45 },
-  { emoji: '☁️', x: 62, y: 5, size: 40, opacity: 0.4 },
-  { emoji: '🌳', x: 5, y: 20, size: 60 },
-  { emoji: '🌳', x: 94, y: 30, size: 60 },
-  { emoji: '🌲', x: 30, y: 38, size: 48 },
-  { emoji: '🌳', x: 70, y: 14, size: 48 },
-  { emoji: '🌳', x: 8, y: 82, size: 60 },
-  { emoji: '🌳', x: 90, y: 88, size: 60 },
-  { emoji: '🌲', x: 52, y: 92, size: 48 },
-  { emoji: '🌸', x: 22, y: 30, size: 28, opacity: 0.9 },
-  { emoji: '🌸', x: 45, y: 16, size: 28, opacity: 0.9 },
-  { emoji: '🌸', x: 66, y: 90, size: 28, opacity: 0.9 },
-  { emoji: '🍄', x: 82, y: 45, size: 28, opacity: 0.9 },
-  { emoji: '🍄', x: 36, y: 78, size: 28, opacity: 0.9 },
-]
+// Tamaño de los marcadores en el mapa: 102px de ancho
+const HOUSE_SIZE = 'w-[102px]'
 
 export function ForestMap() {
   const [selectedSpot, setSelectedSpot] = useState<MapSpot | null>(null)
@@ -112,71 +91,13 @@ export function ForestMap() {
 
         {/* Lienzo del mapa */}
         <div className="relative h-[560px] md:h-[620px] max-h-[75vh] rounded-2xl overflow-hidden border border-black/10 bg-gradient-to-b from-[#e9f5ee] via-[#f7f3ea] to-[#e3eed2]">
-          {/* Río y caminos */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
+          <img
+            src="/mapa.jpg"
+            alt=""
             aria-hidden="true"
-          >
-            <path
-              d="M -5 24 C 15 14, 30 34, 50 24 S 85 14, 105 26"
-              fill="none"
-              stroke="#bfe6df"
-              strokeWidth="26"
-              strokeLinecap="round"
-              opacity="0.55"
-              vectorEffect="non-scaling-stroke"
-            />
-            <path
-              d="M -5 24 C 15 14, 30 34, 50 24 S 85 14, 105 26"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeDasharray="2 14"
-              opacity="0.7"
-              vectorEffect="non-scaling-stroke"
-            />
-            <path
-              d="M 26 100 C 24 78, 40 68, 48 55 S 60 40, 78 38"
-              fill="none"
-              stroke="#f3d9a8"
-              strokeWidth="10"
-              strokeLinecap="round"
-              opacity="0.7"
-              vectorEffect="non-scaling-stroke"
-            />
-            <path
-              d="M 48 55 C 62 62, 78 58, 100 66"
-              fill="none"
-              stroke="#f3d9a8"
-              strokeWidth="8"
-              strokeLinecap="round"
-              opacity="0.7"
-              vectorEffect="non-scaling-stroke"
-            />
-          </svg>
-
-          {/* Decoración */}
-          <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
-            {DECOR.map((d, i) => (
-              <span
-                key={i}
-                className="absolute leading-none"
-                style={{
-                  left: `${d.x}%`,
-                  top: `${d.y}%`,
-                  fontSize: d.size,
-                  opacity: d.opacity ?? 0.75,
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                {d.emoji}
-              </span>
-            ))}
-          </div>
-
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+          />
           {/* Marcadores */}
           {visibleSpots.map((spot) => (
             <SpotMarker
@@ -212,9 +133,11 @@ export function ForestMap() {
                 className="w-full max-w-xs md:w-64 h-auto max-h-56 object-contain shrink-0 drop-shadow-[0_8px_8px_rgba(0,0,0,0.25)]"
               />
             ) : (
-              <div className="w-28 h-28 rounded-2xl bg-white border-4 border-white shadow-md flex items-center justify-center text-5xl shrink-0">
-                {selectedSpot.image}
-              </div>
+              <img
+                src={selectedSpot.image}
+                alt={selectedSpot.name}
+                className="w-full max-w-xs md:w-64 h-auto max-h-56 object-contain shrink-0 drop-shadow-[0_8px_8px_rgba(0,0,0,0.25)]"
+              />
             )}
 
             <div className="flex-1 min-w-0 w-full">
@@ -331,13 +254,16 @@ function SpotMarker({
             }`}
           />
         ) : (
-          <div
-            className={`w-14 h-14 rounded-full bg-white border-4 border-black shadow-lg flex items-center justify-center text-2xl ${
-              selected ? 'ring-4 ring-[#5d4a3a]/40' : ''
+          <img
+            src={spot.image}
+            alt=""
+            draggable={false}
+            className={`block w-[150px] h-auto object-contain select-none ${
+              selected
+                ? 'drop-shadow-[0_8px_8px_rgba(0,0,0,0.35)]'
+                : 'drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]'
             }`}
-          >
-            {spot.image}
-          </div>
+          />
         )}
 
         <img
@@ -385,8 +311,7 @@ function SpotCard({
       }`}
     >
       {isHouse ? (
-        // Casa sin borde ni fondo propio
-        <div className="w-full h-32 mb-3 flex items-center justify-center">
+        <div className="w-full h-40 mb-3 flex items-center justify-center">
           <img
             src={spot.image}
             alt={spot.name}
@@ -394,8 +319,12 @@ function SpotCard({
           />
         </div>
       ) : (
-        <div className="w-full h-32 rounded-lg border border-black/20 mb-3 bg-[#f7f3ea] flex items-center justify-center text-5xl">
-          {spot.image}
+        <div className="w-full h-40 mb-3 flex items-center justify-center">
+          <img
+            src={spot.image}
+            alt={spot.name}
+            className="max-w-full max-h-full object-contain drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]"
+          />
         </div>
       )}
 
